@@ -15,6 +15,8 @@
 // +----------------------------------------------------------------------+
 // | Authors: Richard Heyes <richard@phpguru.org>                         |
 // +----------------------------------------------------------------------+
+//
+// $Id$
 
 require_once('Net/Socket.php');
 
@@ -40,7 +42,7 @@ class Net_POP3 {
     * Some basic information about the mail drop
     * garnered from the STAT command
     *
-    * @var aray
+    * @var array
     */
     var $_maildrop;
 
