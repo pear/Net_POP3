@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<package>
+<!DOCTYPE package SYSTEM "../package.dtd">
+<package version="1.0">
   <name>Net_POP3</name>
   <summary>Provides a POP3 class to access POP3 server.</summary>
   <description>
