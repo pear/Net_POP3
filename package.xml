@@ -31,21 +31,23 @@
       <dep type="pkg" rel="ge" version="1.0">Net_Socket</dep>
     </deps>
   </release>
-  <release>
-    <version>1.0</version>
-    <date>2002-01-19</date>
-    <state>stable</state>
-    <notes>
-      This is the initial release of the Net_POP3 package.
-    </notes>
-    <filelist>
-      <dir name="/" baseinstalldir="Net">
-        <file role="php">Net_POP3.php</file>
-        <file role="php">Net_POP3_example.php</file>
-      </dir>
-    </filelist>
-    <deps>
-      <dep type="pkg" rel="ge" version="1.0">Net_Socket</dep>
-    </deps>
-  </release>
+  <changelog>
+    <release>
+      <version>1.0</version>
+      <date>2002-01-19</date>
+      <state>stable</state>
+      <notes>
+        This is the initial release of the Net_POP3 package.
+      </notes>
+      <filelist>
+        <dir name="/" baseinstalldir="Net">
+          <file role="php">Net_POP3.php</file>
+          <file role="php">Net_POP3_example.php</file>
+        </dir>
+      </filelist>
+      <deps>
+        <dep type="pkg" rel="ge" version="1.0">Net_Socket</dep>
+      </deps>
+    </release>
+  </changelog>
 </package>
