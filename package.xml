@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<package>
+  <name>Net_POP3</name>
+  <summary>Provides a POP3 class to access POP3 server.</summary>
+  <description>
+  Provides a POP3 class to access POP3 server. Support all POP3 commands
+  including UIDL listings and APOP authentication.
+  </description>
+  <maintainers>
+      <maintainer>
+        <user>heyesr</user>
+        <name>Richard Heyes</name>
+        <email>heyesr@php.net</email>
+        <role>lead</role>
+      </maintainer>
+  </maintainers>
+  <release>
+    <version>1.0</version>
+    <date>2002-01-19</date>
+    <state>stable</state>
+    <notes>
+      This is the initial release of the Net_POP3 package.
+    </notes>
+    <filelist>
+    <dir name="/" baseinstalldir="Net">
+        <file role="php">Net_POP3.php</file>
+        <file role="php">Net_POP3_example.php</file>
+    </dir>
+  </filelist>
+  </release>
+</package>
