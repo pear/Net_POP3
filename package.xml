@@ -22,10 +22,13 @@
       This is the initial release of the Net_POP3 package.
     </notes>
     <filelist>
-    <dir name="/" baseinstalldir="Net">
+      <dir name="/" baseinstalldir="Net">
         <file role="php">Net_POP3.php</file>
         <file role="php">Net_POP3_example.php</file>
-    </dir>
-  </filelist>
+      </dir>
+    </filelist>
+    <deps>
+      <dep type="pkg" rel="has" version="1.0">Net_Socket</dep>
+    </deps>
   </release>
 </package>
