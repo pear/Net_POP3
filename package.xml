@@ -15,6 +15,23 @@
       </maintainer>
   </maintainers>
   <release>
+    <version>1.1</version>
+    <date>2002-02-13</date>
+    <state>stable</state>
+    <notes>
+      Renamed file to POP3.php
+    </notes>
+    <filelist>
+      <dir name="/" baseinstalldir="Net">
+        <file role="php">POP3.php</file>
+        <file role="php">Net_POP3_example.php</file>
+      </dir>
+    </filelist>
+    <deps>
+      <dep type="pkg" rel="ge" version="1.0">Net_Socket</dep>
+    </deps>
+  </release>
+  <release>
     <version>1.0</version>
     <date>2002-01-19</date>
     <state>stable</state>
@@ -23,7 +40,7 @@
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="Net">
-        <file role="php">POP3.php</file>
+        <file role="php">Net_POP3.php</file>
         <file role="php">Net_POP3_example.php</file>
       </dir>
     </filelist>
