@@ -23,7 +23,7 @@
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="Net">
-        <file role="php">Net_POP3.php</file>
+        <file role="php">POP3.php</file>
         <file role="php">Net_POP3_example.php</file>
       </dir>
     </filelist>
