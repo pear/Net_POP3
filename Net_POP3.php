@@ -16,7 +16,7 @@
 // | Authors: Richard Heyes <richard@phpguru.org>                         |
 // +----------------------------------------------------------------------+
 
-require_once('Net/Socket.php');
+require_once($CONFIG['includes'].'Socket.php');
 
 /**
 *  +----------------------------- IMPORTANT ------------------------------+
@@ -30,9 +30,9 @@ require_once('Net/Socket.php');
 * For usage see the example script
 */
 
-define('NET_POP3_STATE_DISCONNECTED',  1, TRUE);
-define('NET_POP3_STATE_AUTHORISATION', 2, TRUE);
-define('NET_POP3_STATE_TRANSACTION',   4, TRUE);
+define('NET_POP3_STATE_DISCONNECTED',  1, true);
+define('NET_POP3_STATE_AUTHORISATION', 2, true);
+define('NET_POP3_STATE_TRANSACTION',   4, true);
 
 class Net_POP3 {
 
@@ -115,8 +115,8 @@ class Net_POP3 {
         $this->_host = $host;
         $this->_port = $port;
 
-        $result = $this->_socket->connect($host, $port, FALSE, $this->_timeout);
-        if ($result === TRUE) {
+        $result = $this->_socket->connect($host, $port, false, $this->_timeout);
+        if ($result === true) {
             $data = $this->_socket->readLine();
             if (@substr($data, 0, 3) == '+OK') {
                 // Check for string matching apop timestamp
@@ -125,12 +125,12 @@ class Net_POP3 {
                 }
                 $this->_maildrop = array();
                 $this->_state    = NET_POP3_STATE_AUTHORISATION;
-                return TRUE;
+                return true;
             }
         }
 
         $this->_socket->disconnect();
-        return FALSE;
+        return false;
     }
 
     /*
@@ -153,30 +153,30 @@ class Net_POP3 {
     * @param  $apop Whether to try APOP first
     * @return bool  Success/Failure
     */
-    function login($user, $pass, $apop = TRUE)
+    function login($user, $pass, $apop = true)
     {
         if ($this->_state == NET_POP3_STATE_AUTHORISATION) {
             // Try APOP authentication first
             if ($apop AND $this->_cmdApop($user, $pass)) {
                 $this->_state = NET_POP3_STATE_TRANSACTION;
-                return TRUE;
+                return true;
             }
 
             // APOP failed or not desired, use basic authentication
             if ($this->_cmdUser($user) AND $this->_cmdPass($pass)) {
                 $this->_state = NET_POP3_STATE_TRANSACTION;
-                return TRUE;
+                return true;
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /*
     * Returns the raw headers of the specified message.
     *
     * @param  $msg_id Message number
-    * @return mixed   Either raw headers or FALSE on error
+    * @return mixed   Either raw headers or false on error
     */
     function getRawHeaders($msg_id)
     {
@@ -184,7 +184,7 @@ class Net_POP3 {
             return $this->_cmdTop($msg_id, 0);
         }
         
-        return FALSE;
+        return false;
     }
 
     /*
@@ -195,7 +195,7 @@ class Net_POP3 {
     * an indexed array of all the header values.
     *
     * @param  $msg_id Message number
-    * @return mixed   Either array of headers or FALSE on error
+    * @return mixed   Either array of headers or false on error
     */
     function getParsedHeaders($msg_id)
     {
@@ -218,14 +218,14 @@ class Net_POP3 {
             return $headers;
         }
         
-        return FALSE;
+        return false;
     }
 
     /*
     * Returns the body of the message with given message number.
     *
     * @param  $msg_id Message number
-    * @return mixed   Either message body or FALSE on error
+    * @return mixed   Either message body or false on error
     */
     function getBody($msg_id)
     {
@@ -234,14 +234,14 @@ class Net_POP3 {
             return substr($msg, strpos($msg, "\r\n\r\n")+4);
         }
 
-        return FALSE;
+        return false;
     }
 
     /*
     * Returns the entire message with given message number.
     *
     * @param  $msg_id Message number
-    * @return mixed   Either entire message or FALSE on error
+    * @return mixed   Either entire message or false on error
     */
     function getMsg($msg_id)
     {
@@ -249,13 +249,13 @@ class Net_POP3 {
             return $this->_cmdRetr($msg_id);
         }
         
-        return FALSE;
+        return false;
     }
 
     /*
     * Returns the size of the maildrop
     *
-    * @return mixed Either size of maildrop or FALSE on error
+    * @return mixed Either size of maildrop or false on error
     */
     function getSize()
     {
@@ -268,13 +268,13 @@ class Net_POP3 {
             }
         }
         
-        return FALSE;
+        return false;
     }
 
     /*
     * Returns number of messages in this maildrop
     *
-    * @return mixed Either number of messages or FALSE on error
+    * @return mixed Either number of messages or false on error
     */
     function numMsg()
     {
@@ -287,7 +287,7 @@ class Net_POP3 {
             }
         }
         
-        return FALSE;
+        return false;
     }
 
     /*
@@ -303,30 +303,37 @@ class Net_POP3 {
             return $this->_cmdDele($msg_id);
         }
         
-        return FALSE;
+        return false;
     }
 
     /*
     * Combination of LIST/UIDL commands, returns an array
     * of data
     *
-    * @return mixed Array of data or FALSE on error
+    * @param  $msg_id Optional message number
+    * @return mixed Array of data or false on error
     */
-    function getListing()
+    function getListing($msg_id = null)
     {
         if ($this->_state == NET_POP3_STATE_TRANSACTION) {
-            if ($list = $this->_cmdList()) {
-                if ($uidl = $this->_cmdUidl()) {
-                    foreach ($uidl as $i => $value) {
-                        $list[$i]['uidl'] = $value['uidl'];
+            if (!isset($msg_id)){
+                if ($list = $this->_cmdList()) {
+                    if ($uidl = $this->_cmdUidl()) {
+                        foreach ($uidl as $i => $value) {
+                            $list[$i]['uidl'] = $value['uidl'];
+                        }
                     }
+                    
+                    return $list;
                 }
-                
-                return $list;
+            } else {
+                if ($list = $this->_cmdList($msg_id) AND $uidl = $this->_cmdUidl($msg_id)) {
+                    return array_merge($list, $uidl);
+                }
             }
         }
         
-        return FALSE;
+        return false;
     }
 
     /*
@@ -341,7 +348,7 @@ class Net_POP3 {
             return (bool)$this->_sendCmd('USER ' . $user);
         }
 
-        return FALSE;
+        return false;
     }
 
 
@@ -357,7 +364,7 @@ class Net_POP3 {
             return (bool)$this->_sendCmd('PASS ' . $pass);
         }
 
-        return FALSE;
+        return false;
     }
 
 
@@ -365,7 +372,7 @@ class Net_POP3 {
     * Sends the STAT command
     *
     * @return mixed Indexed array of number of messages and 
-    *               maildrop size, or FALSE on error.
+    *               maildrop size, or false on error.
     */
     function _cmdStat()
     {
@@ -380,7 +387,7 @@ class Net_POP3 {
             }
         }
 
-        return FALSE;
+        return false;
     }
 
 
@@ -389,9 +396,9 @@ class Net_POP3 {
     *
     * @param  $msg_id Optional message number
     * @return mixed   Indexed array of msg_id/msg size or
-    *                 FALSE on error
+    *                 false on error
     */
-    function _cmdList($msg_id = NULL)
+    function _cmdList($msg_id = null)
     {
         if ($this->_state == NET_POP3_STATE_TRANSACTION) {
             if (!isset($msg_id)) {
@@ -414,7 +421,7 @@ class Net_POP3 {
             }
         }
         
-        return FALSE;
+        return false;
     }
 
 
@@ -422,7 +429,7 @@ class Net_POP3 {
     * Sends the RETR command
     *
     * @param  $msg_id The message number to retrieve
-    * @return mixed   The message or FALSE on error
+    * @return mixed   The message or false on error
     */
     function _cmdRetr($msg_id)
     {
@@ -434,7 +441,7 @@ class Net_POP3 {
             }
         }
 
-        return FALSE;
+        return false;
     }
 
 
@@ -450,7 +457,7 @@ class Net_POP3 {
             return (bool)$this->_sendCmd('DELE ' . $msg_id);
         }
 
-        return FALSE;
+        return false;
     }
 
 
@@ -464,11 +471,11 @@ class Net_POP3 {
         if ($this->_state == NET_POP3_STATE_TRANSACTION) {
             $data = $this->_sendCmd('NOOP');
             if ($data) {
-                return TRUE;
+                return true;
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /*
@@ -481,11 +488,11 @@ class Net_POP3 {
         if ($this->_state == NET_POP3_STATE_TRANSACTION) {
             $data = $this->_sendCmd('RSET');
             if ($data) {
-                return TRUE;
+                return true;
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /*
@@ -508,7 +515,7 @@ class Net_POP3 {
     *
     * @param  $msg_id    Message number
     * @param  $num_lines Number of lines to retrieve
-    * @return mixed Message data or FALSE on error
+    * @return mixed Message data or false on error
     */
     function _cmdTop($msg_id, $num_lines)
     {
@@ -520,16 +527,16 @@ class Net_POP3 {
             }
         }
         
-        return FALSE;
+        return false;
     }
 
     /*
     * Sends the UIDL command
     *
     * @param  $msg_id Message number
-    * @return mixed indexed array of msg_id/uidl or FALSE on error
+    * @return mixed indexed array of msg_id/uidl or false on error
     */
-    function _cmdUidl($msg_id = NULL)
+    function _cmdUidl($msg_id = null)
     {
         if ($this->_state == NET_POP3_STATE_TRANSACTION) {
 
@@ -553,7 +560,7 @@ class Net_POP3 {
             }
         }
         
-        return FALSE;
+        return false;
     }
 
     /*
@@ -571,21 +578,21 @@ class Net_POP3 {
                 $data = $this->_sendCmd('APOP ' . $user . ' ' . md5($this->_timestamp . $pass));
                 if ($data) {
                     $this->_state = NET_POP3_STATE_TRANSACTION;
-                    return TRUE;
+                    return true;
                 }
             }
         }
         
-        return FALSE;
+        return false;
     }
 
     /*
     * Sends a command, checks the reponse, and 
     * if good returns the reponse, other wise
-    * returns FALSE.
+    * returns false.
     *
     * @param  $cmd  Command to send (\r\n will be appended)
-    * @return mixed First line of response if successful, otherwise FALSE
+    * @return mixed First line of response if successful, otherwise false
     */
     function _sendCmd($cmd)
     {
@@ -597,7 +604,7 @@ class Net_POP3 {
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /*
