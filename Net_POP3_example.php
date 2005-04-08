@@ -1,6 +1,6 @@
 <?php
 // +-----------------------------------------------------------------------+
-// | Copyright (c) 2002-2003, Richard Heyes                                     |
+// | Copyright (c) 2002, Richard Heyes                                     |
 // | All rights reserved.                                                  |
 // |                                                                       |
 // | Redistribution and use in source and binary forms, with or without    |
@@ -11,7 +11,7 @@
 // |   notice, this list of conditions and the following disclaimer.       |
 // | o Redistributions in binary form must reproduce the above copyright   |
 // |   notice, this list of conditions and the following disclaimer in the |
-// |   documentation and/or other materials provided with the distribution.| 
+// |   documentation and/or other materials provided with the distribution.|
 // | o The names of the authors may not be used to endorse or promote      |
 // |   products derived from this software without specific prior written  |
 // |   permission.                                                         |
@@ -30,6 +30,7 @@
 // |                                                                       |
 // +-----------------------------------------------------------------------+
 // | Author: Richard Heyes <richard@phpguru.org>                           |
+// | Co-Author: Damian Fernandez Sosa <damlists@cnba.uba.ar>               |
 // +-----------------------------------------------------------------------+
 //
 // $Id$
@@ -38,72 +39,119 @@
 <body>
 <?php
 
-include('Net_POP3.php');
+include('./POP3.php');
 
-/*
-* Create the class
-*/
+
+
+
+$user='richard';
+$pass='Alien3';
+$host='localhost';
+$port="110";
+
+// you can create a file called passwords.php and store your $user,$pass,$host and $port values in it
+// or you can modify this script
+@include_once("./passwords.php");
+
+
+
+// Create the class
+
 $pop3 =& new Net_POP3();
 
-/*
-* Connect to localhost on usual port
-* If not given, defaults are localhost:110
-*/
-$pop3->connect('localhost', 110);
+
+
+//$pop3->setDebug();
+
+// Connect to localhost on usual port
+// If not given, defaults are localhost:110
+
+if(PEAR::isError( $ret= $pop3->connect($host , $port ) )){
+    echo "ERROR: " . $ret->getMessage() . "\n";
+    exit();
+}
+
+
+// Login using username/password. APOP will
+// be tried first if supported, then basic.
+
+//$pop3->login($user , $pass , 'APOP');
+//$pop3->login($user , $pass , 'CRAM-MD5');
+
+if(PEAR::isError( $ret= $pop3->login($user , $pass,'USER' ) )){
+    echo "ERROR: " . $ret->getMessage() . "\n";
+    exit();
+}
 
 /*
-* Login using username/password. APOP will
-* be tried first if supported, then basic.
+if(PEAR::isError( $ret= $pop3->login($user , $pass ) )){
+    echo "ERROR: " . $ret->getMessage() . "\n";
+    exit();
+}
 */
-$pop3->login('richard', 'Alien3');
-
 /*
-* Get the raw headers of message 1
+if(PEAR::isError( $ret= $pop3->login($user , $pass , 'CRAM-MD5') )){
+    echo "ERROR: " . $ret->getMessage() . "\n";
+    exit();
+}
 */
-echo '<h2>getRawHeaders()</h2>';
-echo '<pre>' . htmlspecialchars($pop3->getRawHeaders(1)) . '</pre>';
 
-/*
-* Get structured headers of message 1
-*/
-echo '<h2>getParsedHeaders()</h2> <pre>';
+
+$a=$pop3->getListing();
+echo "\n";
+print_r($a);
+//exit();
+
+
+// Get the raw headers of message 1
+
+echo "<h2>getRawHeaders()</h2>\n";
+echo "<pre>" . htmlspecialchars($pop3->getRawHeaders(1)) . "</pre>\n";
+
+
+// Get structured headers of message 1
+
+echo "<h2>getParsedHeaders()</h2> <pre>\n";
 print_r($pop3->getParsedHeaders(1));
-echo '</pre>';
+echo "</pre>\n";
 
-/*
-* Get body of message 1
-*/
-echo '<h2>getBody()</h2>';
-echo '<pre>' . htmlspecialchars($pop3->getBody(1)) . '</pre>';
 
-/*
-* Get number of messages in maildrop
-*/
-echo '<h2>getNumMsg</h2>';
-echo '<pre>' . $pop3->numMsg() . '</pre>';
+// Get body of message 1
 
-/*
-* Get entire message
-*/
-echo '<h2>getMsg()</h2>';
-echo '<pre>' . htmlspecialchars($pop3->getMsg(1)) . '</pre>';
+echo "<h2>getBody()</h2>\n";
+echo "<pre>" . htmlspecialchars($pop3->getBody(1)) . "</pre>\n";
 
-/*
-* Get listing details of the maildrop
-*/
-echo '<h2>getListing()</h2>';
-echo '<pre>';
+
+// Get number of messages in maildrop
+
+echo "<h2>getNumMsg</h2>\n";
+echo "<pre>" . $pop3->numMsg() . "</pre>\n";
+
+
+// Get entire message
+
+echo "<h2>getMsg()</h2>\n";
+echo "<pre>" . htmlspecialchars($pop3->getMsg(1)) . "</pre>\n";
+
+
+
+
+
+// Get listing details of the maildrop
+
+echo "<h2>getListing()</h2>\n";
+echo "<pre>\n";
 print_r($pop3->getListing());
-echo '</pre>';
+echo "</pre>\n";
 
-/*
-* Get size of maildrop
-*/
-echo '<h2>getSize()</h2>';
-echo '<pre>' . $pop3->getSize() . '</pre>';
 
-/*
-* Disconnect
-*/
+// Get size of maildrop
+
+echo "<h2>getSize()</h2>\n";
+echo "<pre>" . $pop3->getSize() . "</pre>\n";
+
+
+// Disconnect
+
 $pop3->disconnect();
 ?>
