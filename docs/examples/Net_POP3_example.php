@@ -39,7 +39,7 @@
 <body>
 <?php
 
-include('./POP3.php');
+include_once 'Net/POP3.php';
 
 
 

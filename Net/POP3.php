@@ -1169,7 +1169,7 @@ class Net_POP3 {
         if (PEAR::isError($lastline = $this->_socket->readLine(8192))) {
             return $this->_raiseError('Failed to read from socket: ' . $this->lastline->getMessage());
         }
-        if($this->_debug) {
+        if ($this->_debug) {
             // S: means this data was sent by  the POP3 Server
             echo "S:$lastline\n" ;
         }
@@ -1191,10 +1191,10 @@ class Net_POP3 {
     {
         if (@substr(strtoupper($response), 0, 3) == '+OK') {
             return true;
-        }else{
+        } else {
             if (@substr(strtoupper($response), 0, 4) == '-ERR') {
                 return $this->_raiseError($response);
-            }else{
+            } else {
                 if (@substr(strtoupper($response), 0, 2) == '+ ') {
                     return true;
                 }
