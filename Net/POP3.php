@@ -157,13 +157,14 @@ class Net_POP3 {
         * Include the Auth_SASL package.  If the package is not available,
         * we disable the authentication methods that depend upon it.
         */
-        if ((@include_once 'Auth/SASL.php') == false) {
-            if($this->_debug){
+        @include_once 'Auth/SASL.php';
+        if (!class_exists('Auth_SASL')) {
+            if ($this->_debug){
                 echo "AUTH_SASL NOT PRESENT!\n";
             }
-            foreach($this->supportedSASLAuthMethods as $SASLMethod){
-                $pos = array_search( $SASLMethod, $this->supportedAuthMethods );
-                if($this->_debug){
+            foreach ($this->supportedSASLAuthMethods as $SASLMethod) {
+                $pos = array_search($SASLMethod, $this->supportedAuthMethods);
+                if ($this->_debug) {
                     echo "DISABLING METHOD $SASLMethod\n";
                 }
                 unset($this->supportedAuthMethods[$pos]);
@@ -182,8 +183,8 @@ class Net_POP3 {
     */
     function _raiseError($msg, $code =-1)
     {
-    include_once 'PEAR.php';
-    return PEAR::raiseError($msg, $code);
+        include_once 'PEAR.php';
+        return PEAR::raiseError($msg, $code);
     }
 
 
@@ -253,10 +254,10 @@ class Net_POP3 {
     {
         if ($this->_state == NET_POP3_STATE_AUTHORISATION) {
 
-            if(PEAR::isError($ret= $this->_cmdAuthenticate($user , $pass , $apop ) ) ){
+            if (PEAR::isError($ret= $this->_cmdAuthenticate($user, $pass, $apop))){
                 return $ret;
             }
-            if( ! PEAR::isError($ret)){
+            if (!PEAR::isError($ret)) {
                 $this->_state = NET_POP3_STATE_TRANSACTION;
                 return true;
             }
@@ -390,6 +391,12 @@ class Net_POP3 {
 
         if (PEAR::isError($method = $this->_getBestAuthMethod($userMethod))) {
             return $method;
+        }
+
+        if (!in_array($userMethod, $this->supportedAuthMethods)) {
+            return $this->_raiseError(
+                'Authentication method "' . $userMethod . '" is not supported.'
+            );
         }
 
         switch ($method) {
@@ -550,14 +557,6 @@ class Net_POP3 {
         }
         if (PEAR::isError($ret=$this->_checkResponse($challenge))) {
             return $ret;
-        }
-
-        @include_once 'Auth/SASL.php';
-        if (!class_exists('Auth_SASL')) {
-            return PEAR::raiseError(
-                'Package Auth_SASL is not installed but needed'
-                . ' for CRAM-MD5 authentication.'
-            );
         }
 
         // remove '+ '
