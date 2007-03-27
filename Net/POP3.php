@@ -541,31 +541,39 @@ class Net_POP3 {
     */
     function _authCRAM_MD5($uid, $pwd )
     {
-        if ( PEAR::isError( $ret = $this->_send( 'AUTH CRAM-MD5' ) ) ) {
+        if (PEAR::isError($ret = $this->_send('AUTH CRAM-MD5'))) {
             return $ret;
         }
 
-        if ( PEAR::isError( $challenge = $this->_recvLn() ) ) {
+        if (PEAR::isError($challenge = $this->_recvLn())) {
             return $challenge;
         }
-        if( PEAR::isError($ret=$this->_checkResponse($challenge) )){
+        if (PEAR::isError($ret=$this->_checkResponse($challenge))) {
             return $ret;
+        }
+
+        @include_once 'Auth/SASL.php';
+        if (!class_exists('Auth_SASL')) {
+            return PEAR::raiseError(
+                'Package Auth_SASL is not installed but needed'
+                . ' for CRAM-MD5 authentication.'
+            );
         }
 
         // remove '+ '
 
         $challenge=substr($challenge,2);
 
-        $challenge = base64_decode( $challenge );
+        $challenge = base64_decode($challenge);
 
         $cram = &Auth_SASL::factory('crammd5');
-        $auth_str = base64_encode( $cram->getResponse( $uid , $pwd , $challenge ) );
+        $auth_str = base64_encode($cram->getResponse($uid , $pwd , $challenge));
 
 
-        if ( PEAR::isError($error = $this->_send( $auth_str ) ) ) {
+        if (PEAR::isError($error = $this->_send($auth_str))) {
             return $error;
         }
-        if ( PEAR::isError( $ret = $this->_recvLn() ) ) {
+        if (PEAR::isError($ret = $this->_recvLn())) {
             return $ret;
         }
         //echo "RET:$ret\n";
