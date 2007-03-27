@@ -1112,7 +1112,7 @@ class Net_POP3 {
     {
         $data = '';
         while(!PEAR::isError($tmp = $this->_recvLn() ) ) {
-            if($tmp == '.'){
+            if($tmp == '.' || $tmp == "\n."){
                 return substr($data, 0, -2);
             }
             if (substr($tmp, 0, 2) == '..') {

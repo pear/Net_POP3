@@ -46,6 +46,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
 * Comment -> docblock. This should fix bug #8171: Add return types and description
 * Fixing bug #8420: Copy&amp;Paste issue ;) (wrong error message)
 * Convert to package.xml v2
+* Fail when authentication method is not supported
+* Fixing #7644: bug POP3 Line Concatenation Function will fail and halt the program
  </notes>
  <contents>
   <dir name="/">
