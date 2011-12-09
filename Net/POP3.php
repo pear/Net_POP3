@@ -289,20 +289,17 @@ class Net_POP3
 
         for ($i = 0; $i < count($data); $i++) {
 
-            $capa='';
-            if (preg_match('/^([a-z,\-]+)( ((.*))|$)$/i', $data[$i], $matches)) {
+            list($capa, $arg) = explode(' ', $data[$i], 2);
 
-                $capa=strtolower($matches[1]);
+            if(isset($capa)) {
+                $capa = strtolower($capa);
+
                 switch ($capa) {
-                    case 'implementation':
-                        $this->_capability['implementation'] = $matches[3];
-                        break;
                     case 'sasl':
-                        $this->_capability['sasl'] = preg_split('/\s+/', $matches[3]);
+                    $this->_capability[$capa] = isset($arg) ? explode(' ', $arg) : array();
                         break;
-                    default :
-                        $this->_capability[$capa] = $matches[2];
-                        break;
+                default:
+                    $this->_capability[$capa] = isset($arg) ? $arg : 1;
                 }
             }
         }
