@@ -1,0 +1,41 @@
+{
+    "authors": [
+        {
+            "email": "richard@php.net",
+            "name": "Richard Heyes",
+            "role": "Lead"
+        },
+        {
+            "email": "damlists@cnba.uba.ar",
+            "name": "Damian Fernandez Sosa",
+            "role": "Lead"
+        },
+        {
+            "email": "george@omniti.com",
+            "name": "George Schlossnagle",
+            "role": "Lead"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Net_POP3": "./"
+        }
+    },
+    "description": "More info available on: http://pear.php.net/package/Net_POP3",
+    "include-path": [
+        "./"
+    ],
+    "license": "BSD",
+    "name": "pear/net_pop3",
+    "support": {
+        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Net_POP3",
+        "source": "https://github.com/pear/Net_POP3"
+    },
+    "type": "library",
+    "require": {
+        "pear/pear_exception": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
